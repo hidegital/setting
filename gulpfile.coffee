@@ -8,6 +8,29 @@ browserify = require 'gulp-browserify'
 rename     = require 'gulp-rename'
 watch      = require 'gulp-watch'
 plumber    = require 'gulp-plumber'
+jade = require 'gulp-jade'
+stylus      = require 'gulp-stylus'
+
+
+#DEST = "./dist"
+#SRC = "./src"
+#paths =
+#  js: ["#{SRC}/**/*.coffee"]
+#  css: ["#{SRC}/**/*.styl", "!#{SRC}/**/spriteSp*.styl", "!#{SRC}/**/_**/*.styl"]
+#  img: ["#{SRC}/**/*.{png,jpg,gif}", "!#{SRC}/**/spriteSp/**/*.png"]
+#  html: ["#{SRC}/**/*.jade", "!#{SRC}/**/_**/*.jade"]
+#  reload: ["#{DEST}/**/*", "!#{DEST}/**/*.css"]
+#  sprite: "#{SRC}/**/sprite/**/*.png"
+#  spriteSp: "#{SRC}/**/spriteSp/**/*.png"
+
+nib = require 'nib'
+gulp.task 'stylus', ['sprite'], ->
+  gulp.src paths.css
+  .pipe plumber()
+  .pipe stylus use: nib(), errors: true
+  .pipe gulp.dest DEST
+  #.pipe browserSync.reload stream: true
+
 
 gulp.task 'default', ->
   gulp.start 'build'
