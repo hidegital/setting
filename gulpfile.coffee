@@ -1,5 +1,6 @@
 'use strict'
 gulp = require 'gulp'
+fs = require 'fs'
 uglify = require 'gulp-uglify'
 livereload = require 'gulp-livereload'
 csso = require 'gulp-csso'
@@ -20,6 +21,7 @@ paths =
 #  img: ["#{SRC}/**/*.{png,jpg,gif}", "!#{SRC}/**/spriteSp/**/*.png"]
   html: ["#{APP}/ejs/**/*.ejs","!" + "#{APP}/ejs/**/_*.ejs"]
   reload: ["#{DEST}/**/*", "!#{DEST}/**/*.css"]
+  json: ["#{APP}/data/*.json"]
 #  sprite: "#{SRC}/**/sprite/**/*.png"
 #  spriteSp: "#{SRC}/**/spriteSp/**/*.png"
 
@@ -30,10 +32,12 @@ gulp.task 'stylus', ->
   .pipe plumber()
   .pipe stylus use: nib(), errors: true
   .pipe gulp.dest DEST
-  #.pipe browserSync.reload stream: true
+#  .pipe browserSync.reload stream: true
+
 gulp.task 'ejs', ->
+  json = JSON.parse(fs.readFileSync('./app/data/index.json'))
   gulp.src paths.html
-  .pipe ejs()
+  .pipe ejs(json)
   .pipe gulp.dest DEST
 
 gulp.task 'coffee', ->
@@ -56,6 +60,10 @@ gulp.task 'watch', ->
   gulp.watch paths.js, ['coffee']
   gulp.watch paths.css, ['stylus']
   gulp.watch paths.html, ['ejs']
+#  gulp.watch paths.html, (e) ->
+#    if e.type != 'deleted'
+#      json = JSON.parse(fs.readFileSync('./index.json'))
+#      gulp.src('./index.ejs').pipe(plumber()).pipe(ejs(json)).pipe(rename('index.html')).pipe gulp.dest('./')
   gulp.watch paths.reload, -> browserSync.reload once: true
 
 gulp.task 'build', [
